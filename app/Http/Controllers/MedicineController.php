@@ -119,7 +119,7 @@ class MedicineController extends BaseController
     {
         // the data that I want to update is in the request and i have the medicine id
         // so everything is under control
-
+//mj,jdsfnkkds
         // doing s simple validation to the medicine_id,category_id and company_id
         if (!Medicine::where('id', $id)->exists())
             return $this->sendError("The medicine doesn't found");
@@ -148,8 +148,6 @@ class MedicineController extends BaseController
      */
     protected function get_medicine(mixed $lang , $id = null)
     {
-
-
        $medicines = Medicine::query()
                 ->when($lang == 'ar' ,
                         function($query){
@@ -157,7 +155,6 @@ class MedicineController extends BaseController
                                 ->select('id', 'category_id', 'company_id', 'scientific_name_AR as scientific_name',
                                     'economic_name_AR as economic_name', "unit_price")
                                 ->with([
-
                                     'category:id,name_AR as name',
                                     'company:id,name_AR as name',
                                     'batches:medicine_id,quantity,expiration_date'
@@ -178,7 +175,7 @@ class MedicineController extends BaseController
                         }
 
                 )
-                ->withCount('favored as popularity')
+                ->withCount('favorite_users as popularity')
                 ->OrderBy('popularity' , 'desc')
                 ->when($id == null ,
                     function($query){

@@ -12,7 +12,7 @@ class OrderObserve
     public function created(Order $order): void
     {
         // when i create an order i should remove the purchased medicines
-        // from the stock
+        // from the warehouse
 
         $order_items = $order->items ;
 

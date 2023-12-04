@@ -24,7 +24,7 @@ class MedicineResource extends JsonResource
         $data['is_favorite'] = FavoriteMedicine::query()->where([
                                                                 ['medicine_id' , '=' , $id],
                                                                 ['user_id' , '=' , $user]])->exists();
-
+//sdfsd
         if($get_favorite){
 
         }
