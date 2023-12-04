@@ -119,7 +119,7 @@ class MedicineController extends BaseController
     {
         // the data that I want to update is in the request and i have the medicine id
         // so everything is under control
-//mj,jdsfnkkds
+//dfd//mj,jdsfnkkds
         // doing s simple validation to the medicine_id,category_id and company_id
         if (!Medicine::where('id', $id)->exists())
             return $this->sendError("The medicine doesn't found");
