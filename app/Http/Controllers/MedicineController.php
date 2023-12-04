@@ -6,6 +6,7 @@ use App\Http\Resources\MedicineResource;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\ExpirationMedicine;
+use App\Models\FavoriteMedicine;
 use App\Models\Medicine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,19 +52,19 @@ class MedicineController extends BaseController
             "quantity" => 'required',
             "expiration_date" => 'required|date',
             "unit_price" => 'required',
-            //  'image' => ['image' , 'mimes:jpeg,png,bmp,jpg,gif,svg']
+            'image' => ['image' , 'mimes:jpeg,png,bmp,jpg,gif,svg']
         ]);
         if ($validator->fails()) {
             return $this->sendError($validator->errors());
         }
-        /*$image= $request->file('image');
+        $image= $request->file('image');
 
         $medicine_image = null;
         if($request->hasFile('image')){
             $medicine_image = time().'.'.$image->getClientOriginalExtension();
             $image->move(public_path('image'),$medicine_image);
             $medicine_image='image/'.$medicine_image ;
-        }*/
+        }
 
 
         $company = DB::table('companies')
@@ -85,7 +86,8 @@ class MedicineController extends BaseController
             "scientific_name_AR" => $request['scientific_name_AR'],
             "economic_name_EN" => $request['economic_name_EN'],
             "economic_name_AR" => $request['economic_name_AR'],
-            "unit_price" => $request["unit_price"]
+            "unit_price" => $request["unit_price"],
+            "image" => $medicine_image
         ]);
         ExpirationMedicine::create([
             'medicine_id' => $medicine->id,
@@ -155,7 +157,8 @@ class MedicineController extends BaseController
                             'company_id',
                             'scientific_name_AR as scientific_name',
                             'economic_name_AR as economic_name',
-                            "unit_price"
+                            'image',
+                            'unit_price'
                         )
                         ->with([
                             'category:id,name_AR as name',
@@ -172,35 +175,31 @@ class MedicineController extends BaseController
                             'company_id',
                             'scientific_name_EN as scientific_name',
                             'economic_name_EN as economic_name',
-                            "unit_price"
+                            'image',
+                            'unit_price'
                         )
                         ->with([
-
                             'category:id,name_EN as name',
                             'company:id,name_EN as name',
                             'batches:medicine_id,quantity,expiration_date'
                         ])
                         ->filter(request(['category', 'search']));
                 }
-
             )
             ->withCount('favorite_users as popularity')
-            ->OrderBy('popularity', 'desc')
+            ->OrderBy('popularity', 'DESC')
             ->when(
                 $id == null,
                 function ($query) {
-                    return $query->paginate(2)
+                    return $query->paginate(5)
                         ->withQueryString();
                 },
                 function ($query) use ($id) {
                     return $query->find($id);
                 }
-
             );
-
         if ($id != null)
             return new MedicineResource($medicines);
-
         return MedicineResource::collection($medicines);
     }
 }

@@ -20,8 +20,7 @@ return new class extends Migration
             $table->string('economic_name_EN');
             $table->string('scientific_name_AR');
             $table->string('economic_name_AR');
-            //$table->integer('quantity_in_stock');
-            //$table->date('expiration_date');
+            $table->string('image')->nullable();
             $table->integer('unit_price');
             $table->timestamps();
 

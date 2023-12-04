@@ -24,9 +24,12 @@ class MedicineResource extends JsonResource
         $data['is_favorite'] = FavoriteMedicine::query()->where([
                                                                 ['medicine_id' , '=' , $id],
                                                                 ['user_id' , '=' , $user]])->exists();
-//sdfsd
-        if($get_favorite){
+        $data['quantity'] = ExpirationMedicine::query()
+                    ->sum('quantity');
 
+        if($data['image'] != null){
+
+            $data['image'] = base64_encode(file_get_contents(public_path($data['image'])));
         }
         return $data;
     }

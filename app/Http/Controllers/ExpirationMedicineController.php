@@ -39,10 +39,7 @@ class ExpirationMedicineController extends BaseController
                     ['expiration_date' , '=' , $request['expiration_date']]
                 ])->first();
         $batch = null ;
-        if(is_null($checking_batch))
-            $batch = ExpirationMedicine::create($request->all());
-        else
-            $batch = $this->update($request,$checking_batch);
+        $batch = is_null($checking_batch) ? ExpirationMedicine::create($request->all()) : $this->update($request, $checking_batch);
         return $this->sendResponse($batch);
     }
 
