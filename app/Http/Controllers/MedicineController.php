@@ -25,7 +25,7 @@ class MedicineController extends BaseController
         //return Medicine::OrderBy('popularity' , 'desc')->get();
         $lang = request('lang');
         $medicines = $this->get_medicine($lang);
-        return $this->sendResponse($medicines , "medicines");
+        return $this->sendResponse($medicines, "medicines");
     }
 
 
@@ -43,7 +43,7 @@ class MedicineController extends BaseController
          here he should just write the quantity and the expiration date
         */
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             "category_id" => 'required',
             "company_name_EN" => 'required',
             "company_name_AR" => 'required',
@@ -54,9 +54,9 @@ class MedicineController extends BaseController
             "quantity" => 'required',
             "expiration_date" => 'required|date',
             "unit_price" => 'required',
-          //  'image' => ['image' , 'mimes:jpeg,png,bmp,jpg,gif,svg']
+            //  'image' => ['image' , 'mimes:jpeg,png,bmp,jpg,gif,svg']
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError($validator->errors());
         }
         /*$image= $request->file('image');
@@ -70,12 +70,12 @@ class MedicineController extends BaseController
 
 
         $company = DB::table('companies')
-                       ->where('name_EN' , 'regexp' ,$request['company_name_EN'])
-                       ->first();
-        if(is_null($company)){
+            ->where('name_EN', 'regexp', $request['company_name_EN'])
+            ->first();
+        if (is_null($company)) {
             $company = Company::create([
-               'name_EN' => $request['company_name_EN'],
-               'name_AR' => $request['company_name_AR']
+                'name_EN' => $request['company_name_EN'],
+                'name_AR' => $request['company_name_AR']
             ]);
         }
         // TODO: creating the medicine expiration table and see if anything should change right here
@@ -91,9 +91,9 @@ class MedicineController extends BaseController
             "unit_price" => $request["unit_price"]
         ]);
         ExpirationMedicine::create([
-           'medicine_id' => $medicine->id ,
-           'quantity' => $request['quantity'],
-           'expiration_date' => $request['expiration_date']
+            'medicine_id' => $medicine->id,
+            'quantity' => $request['quantity'],
+            'expiration_date' => $request['expiration_date']
         ]);
         return $this->show($medicine->id);
     }
@@ -119,7 +119,7 @@ class MedicineController extends BaseController
     {
         // the data that I want to update is in the request and i have the medicine id
         // so everything is under control
-//dfd//mj,jdsfnkkds
+
         // doing s simple validation to the medicine_id,category_id and company_id
         if (!Medicine::where('id', $id)->exists())
             return $this->sendError("The medicine doesn't found");
@@ -146,52 +146,65 @@ class MedicineController extends BaseController
     /**
      * @param mixed $lang
      */
-    protected function get_medicine(mixed $lang , $id = null)
+    protected function get_medicine(mixed $lang, $id = null)
     {
-       $medicines = Medicine::query()
-                ->when($lang == 'ar' ,
-                        function($query){
-                            return $query
-                                ->select('id', 'category_id', 'company_id', 'scientific_name_AR as scientific_name',
-                                    'economic_name_AR as economic_name', "unit_price")
-                                ->with([
-                                    'category:id,name_AR as name',
-                                    'company:id,name_AR as name',
-                                    'batches:medicine_id,quantity,expiration_date'
-                                ])
-                                ->filter(request(['category', 'search']));
-                        },
-                        function($query){
-                            return $query
-                                ->select('id', 'category_id', 'company_id', 'scientific_name_EN as scientific_name',
-                                    'economic_name_EN as economic_name', "unit_price" )
-                                ->with([
+        $medicines = Medicine::query()
+            ->when(
+                $lang == 'ar',
+                function ($query) {
+                    return $query
+                        ->select(
+                            'id',
+                            'category_id',
+                            'company_id',
+                            'scientific_name_AR as scientific_name',
+                            'economic_name_AR as economic_name',
+                            "unit_price"
+                        )
+                        ->with([
+                            'category:id,name_AR as name',
+                            'company:id,name_AR as name',
+                            'batches:medicine_id,quantity,expiration_date'
+                        ])
+                        ->filter(request(['category', 'search']));
+                },
+                function ($query) {
+                    return $query
+                        ->select(
+                            'id',
+                            'category_id',
+                            'company_id',
+                            'scientific_name_EN as scientific_name',
+                            'economic_name_EN as economic_name',
+                            "unit_price"
+                        )
+                        ->with([
 
-                                    'category:id,name_EN as name',
-                                    'company:id,name_EN as name',
-                                    'batches:medicine_id,quantity,expiration_date'
-                                ])
-                                ->filter(request(['category', 'search']));
-                        }
+                            'category:id,name_EN as name',
+                            'company:id,name_EN as name',
+                            'batches:medicine_id,quantity,expiration_date'
+                        ])
+                        ->filter(request(['category', 'search']));
+                }
 
-                )
-                ->withCount('favorite_users as popularity')
-                ->OrderBy('popularity' , 'desc')
-                ->when($id == null ,
-                    function($query){
-                        return $query->paginate(2)
-                            ->withQueryString();
-                        },
-                    function($query) use ($id) {
-                        return $query->find($id);
-                    }
+            )
+            ->withCount('favorite_users as popularity')
+            ->OrderBy('popularity', 'desc')
+            ->when(
+                $id == null,
+                function ($query) {
+                    return $query->paginate(2)
+                        ->withQueryString();
+                },
+                function ($query) use ($id) {
+                    return $query->find($id);
+                }
 
-                );
+            );
 
-                if($id != null)
-                        return new MedicineResource($medicines);
+        if ($id != null)
+            return new MedicineResource($medicines);
 
-                return MedicineResource::collection($medicines);
-
+        return MedicineResource::collection($medicines);
     }
 }
