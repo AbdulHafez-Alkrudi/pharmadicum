@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\MedicineCollection;
 use App\Http\Resources\MedicineResource;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\ExpirationMedicine;
 use App\Models\Medicine;
-use Faker\Provider\Base;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\BaseController;
-use Illuminate\Auth\Events\Validated;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,9 +18,8 @@ class MedicineController extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //return Medicine::OrderBy('popularity' , 'desc')->get();
         $lang = request('lang');
         $medicines = $this->get_medicine($lang);
         return $this->sendResponse($medicines, "medicines");
@@ -129,9 +126,8 @@ class MedicineController extends BaseController
         if ($request['company_id'] != null && !Company::where('id', $request['company_id'])->exists()) {
             return $this->sendError("the company id isn't valid");
         }
-
         $medicine = Medicine::find($id);
-        $medicine->update($request->all());
+        $medicine->update($request->except('lang'));
         return $this->show($id);
     }
 
@@ -146,7 +142,7 @@ class MedicineController extends BaseController
     /**
      * @param mixed $lang
      */
-    protected function get_medicine(mixed $lang, $id = null)
+    protected function get_medicine(mixed $lang, $id = null): MedicineResource|AnonymousResourceCollection
     {
         $medicines = Medicine::query()
             ->when(

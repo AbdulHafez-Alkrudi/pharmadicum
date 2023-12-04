@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,7 @@ class OrderController extends BaseController
      */
     public function index()
     {
-        return $this->sendResponse($this->get_order() , "medicines");
+        return $this->get_order();
     }
     /**
      * Store a newly created resource in storage.
@@ -62,7 +63,7 @@ class OrderController extends BaseController
      */
     public function show($id)
     {
-        return $this->sendResponse($this->get_order($id), "order");
+        return $this->get_order($id);
     }
 
     /**
@@ -74,20 +75,21 @@ class OrderController extends BaseController
             return $this->sendError("the order id isn't valid");
         }
         $order = Order::find($id);
+
         // here if the order status id == 1 means the order is bending, otherwise the customer received his order and can't
         // change it anymore
         if($order->order_status_id == 2){
             return $this->sendError("this order couldn't be updated anymore");
         }
-        return $request;
-        $order->update($request->all());
-        return $this->show($id);
+        $order->update($request->except('lang'));
+
+        return $this->get_order($id);
     }
 
-    protected function get_order($id = null)
+    protected function get_order($id = null): JsonResponse
     {
         $user = Auth::user();
-        return Order::query()
+        $order = Order::query()
             ->when(request('lang') == 'ar' ,
                 function($query) use ($user) {
                     return $query
@@ -112,14 +114,13 @@ class OrderController extends BaseController
             )
             ->when($id == null ,
                     function($query){
-                        return $query->paginate(2)
-                            ->withQueryString();
+                        return $query->get();
                     },
                     function($query) use ($id) {
                         return $query->find($id);
                     }
             );
-
+        return $this->sendResponse($order , 'orders');
     }
 }
 

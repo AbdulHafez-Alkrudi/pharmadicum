@@ -12,7 +12,18 @@ class CategoryController extends BaseController
      */
     public function index()
     {
-        return $this->sendResponse(Category::get() , 'categories');
+        $lang = request('lang');
+        $categories = Category::query()
+                ->when($lang == 'ar' ,
+                fn($query) =>
+                        $query->select('id','name_AR as name')
+                ,
+                fn($query)=>
+                        $query->select('id','name_EN as name')
+                )
+                ->get();
+
+        return $this->sendResponse($categories , 'categories');
     }
 
     /**

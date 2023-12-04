@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ExpirationMedicine extends Model
 {
     use HasFactory;
-
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d',
+        'updated_at' => 'datetime:Y-m-d'
+    ];
     public function medicine(): BelongsTo
     {
         return $this->belongsTo(Medicine::class);

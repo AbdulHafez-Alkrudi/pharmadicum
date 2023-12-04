@@ -15,7 +15,7 @@ class FavoriteMedicineController extends BaseController
     public function index()
     {
         $user = Auth::user();
-        return $this->sendResponse($user->favorites);
+        return $this->sendResponse($user->favorites , 'favorites');
     }
 
     /**

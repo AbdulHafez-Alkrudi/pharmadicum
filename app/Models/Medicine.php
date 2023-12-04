@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @method static where(string $string, $id)
+ */
 class Medicine extends Model
 {
     use HasFactory;
@@ -46,7 +49,7 @@ class Medicine extends Model
     }
 
 
-    // Here I'm creating the filtering function that will receive the category name or the name of
+    // Here I'm creating the filtering function that will receive the category ID or the name of
     // the medicine that the customer is searching for
     //
     // the first argument is the query builder which laravel pass it by default
@@ -63,7 +66,6 @@ class Medicine extends Model
                     $query->where('id' , $category)
             )
        );
-
        // here I'll check if the user is searching about a specific medicine by sending
        // its name :
 
