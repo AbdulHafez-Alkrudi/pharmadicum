@@ -23,6 +23,7 @@ class MedicineController extends BaseController
     {
         $lang = request('lang');
         $medicines = $this->get_medicine($lang);
+
         return $this->sendResponse($medicines, "medicines");
     }
 

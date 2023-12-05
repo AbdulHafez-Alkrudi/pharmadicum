@@ -15,11 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-           //Medicine::factory(10)->create();
             ExpirationMedicine::factory(10)->create();
             $this->call([
                OrderStatusSeeder::class,
-               PaymentStatusSeeder::class
+               PaymentStatusSeeder::class,
+               RoleSeeder::class,
+               AdminUserSeeder::class
            ]);
     }
 }

@@ -23,17 +23,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::post('register' , [RegisterController::class , 'register']);
+Route::post('register' , RegisterController::class);
 Route::post('login', [LoginController::class , 'login']);
 
-
-
 Route::middleware(['auth:api']) ->group(function(){
-    Route::post('logout', [LogoutController::class, 'logout']);
+    Route::post('logout', LogoutController::class);
     Route::resource('order'   , OrderController::class);
     Route::resource('medicine', MedicineController::class);
     Route::resource('category', CategoryController::class);

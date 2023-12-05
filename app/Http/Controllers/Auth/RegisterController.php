@@ -4,19 +4,21 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends BaseController
 {
-    public function register(Request $request)
+
+    public function __invoke(Request $request): JsonResponse
     {
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
             'pharmacy_name' => 'required',
-            'phone_number' => 'required',
+            'phone_number' => 'required|unique:users,phone_number',
             'password' => 'required|min:8',
         ]);
 

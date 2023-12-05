@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
-use Illuminate\Auth\Access\Response;
+use App\Models\OrderStatus;
+use Carbon\Exceptions\UnknownSetterException;use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -78,7 +79,7 @@ class OrderController extends BaseController
 
         // here if the order status id == 1 means the order is bending, otherwise the customer received his order and can't
         // change it anymore
-        if($order->order_status_id == 2){
+        if($order->order_status_id == [OrderStatus::DELIVERED]){
             return $this->sendError("this order couldn't be updated anymore");
         }
         $order->update($request->except('lang'));
@@ -86,7 +87,7 @@ class OrderController extends BaseController
         return $this->get_order($id);
     }
 
-    protected function get_order($id = null): JsonResponse
+    protected function get_order($id = null)
     {
         $user = Auth::user();
         $order = Order::query()
@@ -107,7 +108,7 @@ class OrderController extends BaseController
                         ->with([
                             'items:id,order_id,medicine_id,unit_price,created_at' ,
                             'order_status:id,name_EN as name' ,
-                            'payment_status:id,name_EN as name'
+                            'payment_status:id,name_EN as name',
                         ])
                         ->where("customer_id" , $user->id);
                 }
