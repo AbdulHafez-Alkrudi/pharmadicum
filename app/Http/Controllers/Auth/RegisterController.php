@@ -22,15 +22,15 @@ class RegisterController extends BaseController
 
         if($validator->fails())
         {
-            return $this->sendError('Validate Error', $validator->errors());
+            return $this->sendError($validator->errors());
         }
 
         $input['password'] = Hash::make($input['password']);
+        $input['role_id'] = 2 ;
 
         $user = User::create($input);
         // just to send it to the API
         $user['accessToken'] =  $user->createToken('Personal Access Token')->accessToken;
         return $this->sendResponse($user);
-
     }
 }

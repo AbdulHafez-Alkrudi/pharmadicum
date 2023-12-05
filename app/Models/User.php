@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -19,11 +20,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'phone_number',
-        'password',
-    ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -51,12 +48,12 @@ class User extends Authenticatable
     {
         return $this->HasMany(Order::class);
     }
-    /*public function favorites(): BelongsToMany
-    {
-        return $this->belongsToMany(Medicine::class,'favorite_medicines');
-    }*/
     public function favorites(): HasMany
     {
         return $this->hasMany(FavoriteMedicine::class);
+    }
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
     }
 }

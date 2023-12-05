@@ -15,7 +15,7 @@ class LoginController extends BaseController
             $accessToken = $request->user()->createToken('Personal Access Token')->accessToken ;
             $user = Auth::user();
             $user['accessToken'] = $accessToken;
-            return $this->sendResponse($user);
+            return $this->sendResponse($user , 'user');
         }
         return $this->sendError( ['error' => 'Unauthorised']);
     }
