@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MedicineResource;
 use App\Models\FavoriteMedicine;
+use App\Models\Medicine;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -14,8 +18,52 @@ class FavoriteMedicineController extends BaseController
      */
     public function index()
     {
-        $user = Auth::user();
-        return $this->sendResponse($user->favorites , 'favorites');
+        $user = auth()->user();
+        $lang = request('lang');
+        $medicines = Medicine::query()
+            ->when(
+                $lang == 'ar',
+                function ($query) {
+                    return $query
+                        ->select(
+                            'id',
+                            'category_id',
+                            'company_id',
+                            'scientific_name_AR as scientific_name',
+                            'economic_name_AR as economic_name',
+                            'image',
+                            'unit_price'
+                        )
+                        ->with([
+                            'category:id,name_AR as name',
+                            'company:id,name_AR as name',
+                            'batches:medicine_id,quantity,expiration_date'
+                        ]);
+                },
+                function ($query) {
+                    return $query
+                        ->select(
+                            'id',
+                            'category_id',
+                            'company_id',
+                            'scientific_name_EN as scientific_name',
+                            'economic_name_EN as economic_name',
+                            'image',
+                            'unit_price'
+                        )
+                        ->with([
+                            'category:id,name_EN as name',
+                            'company:id,name_EN as name',
+                            'batches:medicine_id,quantity,expiration_date'
+                        ])
+                       ;
+                }
+            )
+            ->whereHas('favorite_users' , function($query) use($user){
+                return $query->where('user_id' , $user->id);
+            })
+            ->get();
+        return $this->sendResponse($medicines , 'favorites');
     }
 
     /**
@@ -23,7 +71,6 @@ class FavoriteMedicineController extends BaseController
      */
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all() , [
            'medicine_id' => 'required',
         ]);
@@ -67,7 +114,7 @@ class FavoriteMedicineController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FavoriteMedicine $favoriteMedicine)
+    public function destroy(FavoriteMedicine $favoriteMedicine): JsonResponse
     {
         $favoriteMedicine->delete();
         return $this->sendResponse([] , 'destroy_favorite');

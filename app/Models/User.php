@@ -48,9 +48,10 @@ class User extends Authenticatable
     {
         return $this->HasMany(Order::class);
     }
-    public function favorites(): HasMany
+    public function favorites()
     {
-        return $this->hasMany(FavoriteMedicine::class);
+        //return $this->hasMany(FavoriteMedicine::class);
+        return $this->belongsToMany(Medicine::class , 'favorite_medicines');
     }
     public function role(): BelongsTo
     {

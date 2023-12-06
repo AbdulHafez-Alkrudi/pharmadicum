@@ -19,7 +19,7 @@ class BaseController extends Controller
     public function sendError($errorMessage = [], $code = 200)
     {
         $response = [
-            'status' => 'failuer'
+            'status' => 'failure'
         ];
 
         if(!empty($errorMessage))

@@ -21,7 +21,8 @@ class ExpirationMedicineController extends BaseController
      */
     public function store(Request $request)
     {
-        // when i want to add more medicines to the stock, i need the quantity,expiration_date,medicine_id
+        // when i want to add more medicines to the stock,
+        // i need the quantity,expiration_date,medicine_id
         $validator = Validator::make($request->all(),[
             'medicine_id' => 'required',
             'expiration_date' => 'required|date',
@@ -38,7 +39,7 @@ class ExpirationMedicineController extends BaseController
                     ['medicine_id'     , '=' , $request['medicine_id']],
                     ['expiration_date' , '=' , $request['expiration_date']]
                 ])->first();
-        $batch = null ;
+
         $batch = is_null($checking_batch) ? ExpirationMedicine::create($request->all()) : $this->update($request, $checking_batch);
         return $this->sendResponse($batch);
     }

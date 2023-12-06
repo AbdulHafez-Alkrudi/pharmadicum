@@ -37,15 +37,10 @@ class Medicine extends Model
     {
         return $this->belongsTo(Company::class);
     }
-
-
-    /*public function favored(): BelongsToMany
+    public function favorite_users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'favorite_medicines');
-    }*/
-    public function favorite_users(): HasMany
-    {
-        return $this->hasMany(FavoriteMedicine::class);
+        //return $this->hasMany(FavoriteMedicine::class);
+        return $this->belongsToMany(User::class , 'favorite_medicines');
     }
 
 

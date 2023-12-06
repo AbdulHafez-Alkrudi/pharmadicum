@@ -15,20 +15,18 @@ class MedicineResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request , $get_favorite = false): array
+    public function toArray(Request $request , $get_favorite = false)
     {
 
         $user = auth()->id();
-        $id = $this->id ;
+        $medicine_id = $this->id ;
         $data = parent::toArray($request);
         $data['is_favorite'] = FavoriteMedicine::query()->where([
-                                                                ['medicine_id' , '=' , $id],
+                                                                ['medicine_id' , '=' , $medicine_id],
                                                                 ['user_id' , '=' , $user]])->exists();
         $data['quantity'] = ExpirationMedicine::query()
                     ->sum('quantity');
-
-        if($data['image'] != null){
-
+        if(array_key_exists('image' , $data)){
             $data['image'] = base64_encode(file_get_contents(public_path($data['image'])));
         }
         return $data;
