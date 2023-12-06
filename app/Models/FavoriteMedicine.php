@@ -13,12 +13,4 @@ class FavoriteMedicine extends Model
         'created_at' => 'datetime:Y-m-d',
         'updated_at' => 'datetime:Y-m-d'
     ];
-    /*public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-    public function medicine(): BelongsTo
-    {
-        return $this->belongsTo(Medicine::class);
-    }*/
 }

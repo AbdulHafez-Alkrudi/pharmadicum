@@ -79,7 +79,7 @@ class OrderController extends BaseController
 
         // here if the order status id == 1 means the order is bending, otherwise the customer received his order and can't
         // change it anymore
-        if($order->order_status_id == [OrderStatus::DELIVERED]){
+        if($order->order_status_id == 3){
             return $this->sendError("this order couldn't be updated anymore");
         }
         $order->update($request->except('lang'));
@@ -96,7 +96,7 @@ class OrderController extends BaseController
                     return $query
                         ->select("id" , "customer_id" , "order_status_id", "payment_status_id", "total_invoice" , "created_at")
                         ->with([
-                            'items:id,order_id,medicine_id,unit_price,created_at' ,
+                            'items:id,order_id,medicine_id,amount,unit_price' ,
                             'order_status:id,name_AR as name' ,
                             'payment_status:id,name_AR as name'
                         ])
@@ -106,7 +106,7 @@ class OrderController extends BaseController
                     return $query
                         ->select("id" , "customer_id" , "order_status_id", "payment_status_id", "total_invoice" , "created_at")
                         ->with([
-                            'items:id,order_id,medicine_id,unit_price,created_at' ,
+                            'items:id,order_id,medicine_id,amount,unit_price' ,
                             'order_status:id,name_EN as name' ,
                             'payment_status:id,name_EN as name',
                         ])

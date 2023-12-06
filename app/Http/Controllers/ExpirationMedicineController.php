@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ExpirationMedicine;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ExpirationMedicineController extends BaseController
@@ -26,7 +27,7 @@ class ExpirationMedicineController extends BaseController
         $validator = Validator::make($request->all(),[
             'medicine_id' => 'required',
             'expiration_date' => 'required|date',
-            'quantity' => 'required'
+            'amount' => 'required'
         ]);
         if($validator->fails()){
             return $this->sendError($validator->errors());
@@ -55,9 +56,12 @@ class ExpirationMedicineController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ExpirationMedicine $batch)
+    public function update(Request $request, ExpirationMedicine $batch )
     {
-        $batch->update($request->all());
+        Log::debug('batch :' , ['batch' => $batch]);
+        Log::debug('request :' , ['amount' => $request['amount']]);
+        $batch['amount'] += $request['amount'];
+        $batch->save();
         return $batch;
     }
 

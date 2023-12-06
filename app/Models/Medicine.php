@@ -18,12 +18,9 @@ class Medicine extends Model
         'created_at' => 'datetime:Y-m-d',
         'updated_at' => 'datetime:Y-m-d'
     ];
-    /*protected $withCount = [
-        'favored as popularity'
-    ];*/
     public function batches(): HasMany
     {
-        return $this->hasMany(ExpirationMedicine::class );
+        return $this->hasMany(ExpirationMedicine::class )->orderBy('expiration_date');
     }
     public function category(): BelongsTo
     {

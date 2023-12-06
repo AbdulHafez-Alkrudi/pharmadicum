@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @method static find($id)
- */
+
 class Order extends Model
 {
     use HasFactory;
@@ -22,12 +20,8 @@ class Order extends Model
     public function user() :belongsTo{
         return $this->belongsTo(User::class );
     }
-
-    /*public function items(): BelongsToMany
+    public function items(): HasMany
     {
-        return $this->belongsToMany(Medicine::class , 'order_items')->withPivot(['order_id','medicine_id','amount','unit_price']);
-    }*/
-    public function items(){
         return $this->hasMany(OrderItem::class);
     }
     public function order_status(): BelongsTo

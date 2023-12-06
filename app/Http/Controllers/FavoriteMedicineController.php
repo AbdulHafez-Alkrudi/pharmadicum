@@ -37,7 +37,7 @@ class FavoriteMedicineController extends BaseController
                         ->with([
                             'category:id,name_AR as name',
                             'company:id,name_AR as name',
-                            'batches:medicine_id,quantity,expiration_date'
+                            'batches:medicine_id,amount,expiration_date'
                         ]);
                 },
                 function ($query) {
@@ -54,7 +54,7 @@ class FavoriteMedicineController extends BaseController
                         ->with([
                             'category:id,name_EN as name',
                             'company:id,name_EN as name',
-                            'batches:medicine_id,quantity,expiration_date'
+                            'batches:medicine_id,amount,expiration_date'
                         ])
                        ;
                 }

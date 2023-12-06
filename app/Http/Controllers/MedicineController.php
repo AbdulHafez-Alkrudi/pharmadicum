@@ -39,7 +39,7 @@ class MedicineController extends BaseController
          when the admin wants to add a new medicine that doesn't exist in the stock
          then he should write all the information about it
          but when the medicine is already in the stock,
-         here he should just write the quantity and the expiration date
+         here he should just write the amount and the expiration date
         */
 
         $validator = Validator::make($request->all(), [
@@ -50,7 +50,7 @@ class MedicineController extends BaseController
             "economic_name_EN" => 'required',
             "scientific_name_AR" => 'required',
             "economic_name_AR" => 'required',
-            "quantity" => 'required',
+            "amount" => 'required',
             "expiration_date" => 'required|date',
             "unit_price" => 'required',
             'image' => ['image' , 'mimes:jpeg,png,bmp,jpg,gif,svg']
@@ -92,7 +92,7 @@ class MedicineController extends BaseController
         ]);
         ExpirationMedicine::create([
             'medicine_id' => $medicine->id,
-            'quantity' => $request['quantity'],
+            'amount' => $request['amount'],
             'expiration_date' => $request['expiration_date']
         ]);
         return $this->show($medicine->id);
@@ -164,7 +164,7 @@ class MedicineController extends BaseController
                         ->with([
                             'category:id,name_AR as name',
                             'company:id,name_AR as name',
-                            'batches:medicine_id,quantity,expiration_date'
+                            'batches:medicine_id,amount,expiration_date'
                         ])
                         ->filter(request(['category', 'search']));
                 },
@@ -182,7 +182,7 @@ class MedicineController extends BaseController
                         ->with([
                             'category:id,name_EN as name',
                             'company:id,name_EN as name',
-                            'batches:medicine_id,quantity,expiration_date'
+                            'batches:medicine_id,amount,expiration_date'
                         ])
                         ->filter(request(['category', 'search']));
                 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('expiration_medicines', function (Blueprint $table) {
             $table->id();
             $table->foreignId("medicine_id")->constrained()->cascadeOnDelete();
-            $table->integer("quantity");
+            $table->integer("amount");
             $table->date("expiration_date");
             $table->timestamps();
         });

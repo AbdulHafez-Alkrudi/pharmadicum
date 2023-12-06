@@ -18,8 +18,8 @@ class ExpirationMedicineFactory extends Factory
     public function definition(): array
     {
         return [
-            "medicine_id" => Medicine::factory(),
-            "quantity" => $this->faker->randomNumber(),
+            "medicine_id" => Medicine::factory()->create(''),
+            "amount" => $this->faker->numberBetween(1 , 100),
             "expiration_date" => $this->faker->date()
         ];
     }
