@@ -25,6 +25,7 @@ class MedicineResource extends JsonResource
                                                                 ['medicine_id' , '=' , $medicine_id],
                                                                 ['user_id' , '=' , $user]])->exists();
         $data['amount'] = ExpirationMedicine::query()
+                    ->where('medicine_id' ,$medicine_id)
                     ->sum('amount');
         if($data['image'] != null){
             $data['image'] = base64_encode(file_get_contents(public_path($data['image'])));

@@ -55,7 +55,6 @@ class OrderController extends BaseController
                 ]);
         }
         DB::commit();
-        // if the frontend doesn't need the order items just comment the following three lines
        return $this->get_order($order->id);
     }
 
