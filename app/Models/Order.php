@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
+/**
+ * @method static create(array $array)
+ */
 class Order extends Model
 {
     use HasFactory;
@@ -16,7 +19,6 @@ class Order extends Model
         'created_at' => 'datetime:Y-m-d',
         'updated_at' => 'datetime:Y-m-d'
     ];
-    //protected $with = ['order_items'];
     public function user() :belongsTo{
         return $this->belongsTo(User::class );
     }

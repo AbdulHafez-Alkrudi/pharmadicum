@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExpirationMedicine;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -56,11 +57,11 @@ class ExpirationMedicineController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ExpirationMedicine $batch )
+    public function update(Request $request, ExpirationMedicine $batch ): ExpirationMedicine
     {
-        Log::debug('batch :' , ['batch' => $batch]);
+      /*  Log::debug('batch :' , ['batch' => $batch]);
         Log::debug('request :' , ['amount' => $request['amount']]);
-        $batch['amount'] += $request['amount'];
+      */$batch['amount'] += $request['amount'];
         $batch->save();
         return $batch;
     }
@@ -68,7 +69,7 @@ class ExpirationMedicineController extends BaseController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ExpirationMedicine $batch)
+    public function destroy(ExpirationMedicine $batch): JsonResponse
     {
         //when the quantity is zero in any batch I'll delete it
         $batch->delete();

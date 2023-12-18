@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderStatus;
+use App\Models\Role;
 use Carbon\Exceptions\UnknownSetterException;use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
@@ -61,7 +62,7 @@ class OrderController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         return $this->get_order($id);
     }
@@ -76,22 +77,24 @@ class OrderController extends BaseController
         }
         $order = Order::find($id);
 
-        // here if the order status id == 1 means the order is bending, otherwise the customer received his order and can't
-        // change it anymore
-        if($order->order_status_id == 3){
-            return $this->sendError("this order couldn't be updated anymore");
+        // here if the order status is Delivered, the order can't
+        // be changed anymore
+        if($order->order_status_id == OrderStatus::DELIVERED){
+            return $this->sendError("this order has delivered already and couldn't be updated anymore");
         }
         $order->update($request->except('lang'));
 
         return $this->get_order($id);
     }
-
     protected function get_order($id = null)
     {
+
         $user = Auth::user();
+        $is_admin = $user->role_id == Role::ADMIN;
+
         $order = Order::query()
             ->when(request('lang') == 'ar' ,
-                function($query) use ($user) {
+                function($query) use ($user , $is_admin) {
                     return $query
                         ->select("id" , "customer_id" , "order_status_id", "payment_status_id", "total_invoice" , "created_at")
                         ->with([
@@ -99,9 +102,12 @@ class OrderController extends BaseController
                             'order_status:id,name_AR as name' ,
                             'payment_status:id,name_AR as name'
                         ])
-                        ->where("customer_id" , $user->id);
+                        // here if the user isn't the admin i wanna send all the orders
+                        ->when(!$is_admin , function($query) use($user){
+                            return $query -> where('customer_id' , $user->id);
+                        });
                 },
-                function($query) use ($user) {
+                function($query) use ($user, $is_admin) {
                     return $query
                         ->select("id" , "customer_id" , "order_status_id", "payment_status_id", "total_invoice" , "created_at")
                         ->with([
@@ -109,9 +115,13 @@ class OrderController extends BaseController
                             'order_status:id,name_EN as name' ,
                             'payment_status:id,name_EN as name',
                         ])
-                        ->where("customer_id" , $user->id);
+                        ->when(!$is_admin , function($query) use($user){
+                            return $query -> where('customer_id' , $user->id);
+                        });
                 }
             )
+            ->OrderBy('order_status_id')
+            // here I'm checking if i wanna retrieve a specific order or all the orders
             ->when($id == null ,
                     function($query){
                         return $query->get();
