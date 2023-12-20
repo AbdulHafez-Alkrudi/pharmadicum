@@ -63,6 +63,12 @@ class FavoriteMedicineController extends BaseController
                 return $query->where('user_id' , $user->id);
             })
             ->get();
+
+        foreach($medicines as $medicine){
+            if($medicine['image'] != null){
+                $medicine['image'] = base64_encode(file_get_contents(public_path($medicine['image'])));
+            }
+        }
         return $this->sendResponse($medicines , 'favorites');
     }
 

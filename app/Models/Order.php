@@ -20,7 +20,7 @@ class Order extends Model
         'updated_at' => 'datetime:Y-m-d'
     ];
     public function user() :belongsTo{
-        return $this->belongsTo(User::class , 'customer_id');
+        return $this->belongsTo(User::class);
     }
     public function items(): HasMany
     {
