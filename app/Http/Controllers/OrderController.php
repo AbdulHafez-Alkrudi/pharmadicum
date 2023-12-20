@@ -57,7 +57,7 @@ class OrderController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show($id): JsonResponse
+    public function show($id)
     {
         return $this->get_order($id);
     }
@@ -108,12 +108,13 @@ class OrderController extends BaseController
                         ->select("id" , "customer_id" , "order_status_id", "payment_status_id", "total_invoice" , "created_at")
                         ->with([
                             'user:id,pharmacy_name',
-                            'items:id,order_id,medicine_id,amount,unit_price' ,
+                            'items:id,order_id,medicine_id,amount,unit_price',
                             'order_status:id,name_EN as name' ,
                             'payment_status:id,name_EN as name',
                         ])
                         ->when(!$is_admin , function($query) use($user){
-                            return $query -> where('customer_id' , $user->id);
+                            return $query
+                             ->where('customer_id' , $user->id);
                         });
                 }
             )
@@ -124,9 +125,26 @@ class OrderController extends BaseController
                         return $query->get();
                     },
                     function($query) use ($id) {
-                        return $query->find($id);
+                        if(request('lang') == 'ar')
+                            return $query
+                                -> with('items.medicine:id,category_id,scientific_name_AR as scientific_name,economic_name_AR as economic_name,image,unit_price')
+                                ->find($id);
+
+                        return $query
+                            ->with('items.medicine:id,category_id,scientific_name_EN as scientific_name,economic_name_EN as economic_name,image,unit_price')
+                            ->find($id);
                     }
             );
+        if(!is_null($id)) {
+            $items = $order['items'];
+            $items->map(function($item){
+               $medicine = $item['medicine'];
+               if(!empty($medicine['image'])){
+                   $medicine['image'] = base64_encode(file_get_contents(public_path($medicine['image'])));
+               }
+               return $medicine ;
+            });
+        }
         return $this->sendResponse($order , 'orders');
     }
 }
