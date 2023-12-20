@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExpirationMedicine;
+use App\Models\Medicine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -24,25 +25,35 @@ class ExpirationMedicineController extends BaseController
     public function store(Request $request)
     {
         // when i want to add more medicines to the stock,
-        // i need the quantity,expiration_date,medicine_id
+        // i need the quantity,expiration_date, economic name of the medicine
         $validator = Validator::make($request->all(),[
-            'medicine_id' => 'required',
+            'economic_name' => 'required',
             'expiration_date' => 'required|date',
             'amount' => 'required'
         ]);
         if($validator->fails()){
             return $this->sendError($validator->errors());
         }
-        // now before i create this batch,i'll check if there is any batch that has the same expiration date
+        // checking if the medicine exists or not
+
+        $medicine = Medicine::where('economic_name_AR' , $request['economic_name'])
+                                    ->orWhere('economic_name_EN' , $request['economic_name'])-> first() ;
+
+        if(is_null($medicine)){
+            return $this->sendError("This medicine doesn't exist");
+        }
+
+
+        // now before i create this batch,i'll check if there is a batch that has the same expiration date
         // if so, i'll just update it
 
         $checking_batch = ExpirationMedicine::query()
                 ->where([
-                    ['medicine_id'     , '=' , $request['medicine_id']],
+                    ['medicine_id'     , '=' , $medicine->id],
                     ['expiration_date' , '=' , $request['expiration_date']]
                 ])->first();
-
-        $batch = is_null($checking_batch) ? ExpirationMedicine::create($request->all()) : $this->update($request, $checking_batch);
+        $request['medicine_id'] = $medicine->id;
+        $batch = is_null($checking_batch) ? ExpirationMedicine::create($request->except('economic_name')) : $this->update($request, $checking_batch);
         return $this->sendResponse($batch);
     }
 
@@ -61,7 +72,9 @@ class ExpirationMedicineController extends BaseController
     {
       /*  Log::debug('batch :' , ['batch' => $batch]);
         Log::debug('request :' , ['amount' => $request['amount']]);
-      */$batch['amount'] += $request['amount'];
+      */
+
+        $batch['amount'] += $request['amount'];
         $batch->save();
         return $batch;
     }
