@@ -126,7 +126,8 @@ class MedicineController extends BaseController
             ->orWhere('economic_name_EN' , $economic_name)->first();
 
         Medicine::where('economic_name_AR' , $economic_name)
-            ->orWhere('economic_name_EN' , $economic_name)->update($request->except('lang'));
+            ->orWhere('economic_name_EN' , $economic_name)->update($request->
+            except('lang'));
         return $this->show($medicine['id']) ;
     }
 
