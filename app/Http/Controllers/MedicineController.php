@@ -3,16 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\MedicineResource;
-use App\Models\Category;
-use App\Models\Company;
-use App\Models\ExpirationMedicine;
-use App\Models\FavoriteMedicine;
-use App\Models\Medicine;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use App\Models\{Category, Company, ExpirationMedicine, FavoriteMedicine, Medicine};
+use Illuminate\Http\{JsonResponse, Request, Resources\Json\AnonymousResourceCollection};
+use Illuminate\Support\Facades\{DB, Validator};
 
 class MedicineController extends BaseController
 {
@@ -77,8 +70,6 @@ class MedicineController extends BaseController
                 'name_AR' => $request['company_name_AR']
             ]);
         }
-        // TODO: creating the medicine expiration table and see if anything should change right here
-
         //$medicine = Medicine::create($request->all());
         $medicine = Medicine::create([
             "category_id" => $request['category_id'],
@@ -102,7 +93,7 @@ class MedicineController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         // this function return the information to the user
         // TODO: i should make a function to return all the medicines to the admin
@@ -115,23 +106,28 @@ class MedicineController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $economic_name)
     {
-        // the data that I want to update is in the request and i have the medicine id
+        // the data that I want to update is in the request and i have the economic name of the medicine
         // so everything is under control
-
-        // doing s simple validation to the medicine_id,category_id and company_id
-        if (!Medicine::where('id', $id)->exists())
+        if (!Medicine::where('economic_name_AR' , $economic_name)
+                           ->orWhere('economic_name_EN' , $economic_name)->exists())
             return $this->sendError("The medicine doesn't found");
+        // doing s simple validation to the category_id and company_id
         if ($request['category_id'] != null && !Category::where('id', $request['category_id'])->exists()) {
             return $this->sendError("the category id isn't valid");
         }
         if ($request['company_id'] != null && !Company::where('id', $request['company_id'])->exists()) {
             return $this->sendError("the company id isn't valid");
         }
-        $medicine = Medicine::find($id);
-        $medicine->update($request->except('lang'));
-        return $this->show($id);
+
+
+        $medicine = Medicine::where('economic_name_AR' , $economic_name)
+            ->orWhere('economic_name_EN' , $economic_name)->first();
+
+        Medicine::where('economic_name_AR' , $economic_name)
+            ->orWhere('economic_name_EN' , $economic_name)->update($request->except('lang'));
+        return $this->show($medicine['id']) ;
     }
 
     /**
