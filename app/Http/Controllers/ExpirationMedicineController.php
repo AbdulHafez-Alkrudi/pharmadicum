@@ -36,7 +36,7 @@ class ExpirationMedicineController extends BaseController
             return $this->sendError($validator->errors());
         }
         // checking if the medicine exists or not
-
+        // receiving
         $medicine = Medicine::where([
                 ['economic_name_AR', $request['economic_name'],
                 ['category_id', $request['category_id']]]
