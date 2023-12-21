@@ -26,20 +26,27 @@ class ExpirationMedicineController extends BaseController
     {
         // when i want to add more medicines to the stock,
         // i need the quantity,expiration_date, economic name of the medicine
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'economic_name' => 'required',
+            'category_id' => 'required',
             'expiration_date' => 'required|date',
             'amount' => 'required'
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError($validator->errors());
         }
         // checking if the medicine exists or not
 
-        $medicine = Medicine::where('economic_name_AR' , $request['economic_name'])
-                                    ->orWhere('economic_name_EN' , $request['economic_name'])-> first() ;
+        $medicine = Medicine::where([
+                ['economic_name_AR', $request['economic_name'],
+                ['category_id', $request['category_id']]]
+        ])
+            ->orWhere([
+                ['economic_name_EN', $request['economic_name']],
+                ['category_id', $request['category_id']]
+            ])->first();
 
-        if(is_null($medicine)){
+        if (is_null($medicine)) {
             return $this->sendError("This medicine doesn't exist");
         }
 
@@ -48,10 +55,10 @@ class ExpirationMedicineController extends BaseController
         // if so, i'll just update it
 
         $checking_batch = ExpirationMedicine::query()
-                ->where([
-                    ['medicine_id'     , '=' , $medicine->id],
-                    ['expiration_date' , '=' , $request['expiration_date']]
-                ])->first();
+            ->where([
+                ['medicine_id', '=', $medicine->id],
+                ['expiration_date', '=', $request['expiration_date']]
+            ])->first();
         $request['medicine_id'] = $medicine->id;
         $batch = is_null($checking_batch) ? ExpirationMedicine::create($request->except('economic_name')) : $this->update($request, $checking_batch);
         return $this->sendResponse($batch);
@@ -68,9 +75,9 @@ class ExpirationMedicineController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ExpirationMedicine $batch ): ExpirationMedicine
+    public function update(Request $request, ExpirationMedicine $batch): ExpirationMedicine
     {
-      /*  Log::debug('batch :' , ['batch' => $batch]);
+        /*  Log::debug('batch :' , ['batch' => $batch]);
         Log::debug('request :' , ['amount' => $request['amount']]);
       */
 
