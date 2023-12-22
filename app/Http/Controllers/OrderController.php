@@ -139,21 +139,6 @@ class OrderController extends BaseController
                             ->find($id);
                     }
             );
-
-
-        // if(!is_null($id)) {
-        //     $items = $order['items'];
-        //     $items->map(function($item){
-        //        $medicine = $item['medicine'];
-        //        $unit_price = $item['unit_price'];
-        //        $amount = $item['amount'];
-        //        $item['total_price'] = $unit_price * $amount ;
-        //        if(!empty($medicine['image'])){
-        //            $medicine['image'] = base64_encode(file_get_contents(public_path($medicine['image'])));
-        //        }
-        //        return $medicine ;
-        //     });
-        // }
         return $this->sendResponse($order , 'orders');
     }
 }
