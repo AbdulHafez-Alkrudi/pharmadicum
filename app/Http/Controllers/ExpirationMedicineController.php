@@ -93,6 +93,6 @@ class ExpirationMedicineController extends BaseController
     {
         //when the quantity is zero in any batch I'll delete it
         $batch->delete();
-        return $this->sendResponse();
+        return $this->sendResponse([]);
     }
 }

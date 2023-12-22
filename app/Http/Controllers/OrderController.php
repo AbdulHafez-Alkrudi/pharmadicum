@@ -127,13 +127,13 @@ class OrderController extends BaseController
                         if(request('lang') == 'ar')
                             return $query
                                 -> with([
-                                    'items.medicine:id,category_id,scientific_name_AR as scientific_name,economic_name_AR as economic_name,image,unit_price' ,
+                                    'items.medicine:id,category_id,scientific_name_AR as scientific_name,economic_name_AR as economic_name,unit_price' ,
                                     'items.medicine.category:id,name_AR as name'
                                     ])
                                 ->find($id);
                         return $query
                             ->with([
-                                'items.medicine:id,category_id,scientific_name_EN as scientific_name,economic_name_EN as economic_name,image,unit_price',
+                                'items.medicine:id,category_id,scientific_name_EN as scientific_name,economic_name_EN as economic_name,unit_price',
                                 'items.medicine.category:id,name_EN as name'
                             ])
                             ->find($id);
@@ -141,19 +141,19 @@ class OrderController extends BaseController
             );
 
 
-        if(!is_null($id)) {
-            $items = $order['items'];
-            $items->map(function($item){
-               $medicine = $item['medicine'];
-               $unit_price = $item['unit_price'];
-               $amount = $item['amount'];
-               $item['total_price'] = $unit_price * $amount ;
-               if(!empty($medicine['image'])){
-                   $medicine['image'] = base64_encode(file_get_contents(public_path($medicine['image'])));
-               }
-               return $medicine ;
-            });
-        }
+        // if(!is_null($id)) {
+        //     $items = $order['items'];
+        //     $items->map(function($item){
+        //        $medicine = $item['medicine'];
+        //        $unit_price = $item['unit_price'];
+        //        $amount = $item['amount'];
+        //        $item['total_price'] = $unit_price * $amount ;
+        //        if(!empty($medicine['image'])){
+        //            $medicine['image'] = base64_encode(file_get_contents(public_path($medicine['image'])));
+        //        }
+        //        return $medicine ;
+        //     });
+        // }
         return $this->sendResponse($order , 'orders');
     }
 }
