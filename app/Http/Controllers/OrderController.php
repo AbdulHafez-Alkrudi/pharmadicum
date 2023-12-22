@@ -126,11 +126,17 @@ class OrderController extends BaseController
                     function($query) use ($id) {
                         if(request('lang') == 'ar')
                             return $query
-                                -> with('items.medicine:id,category_id,scientific_name_AR as scientific_name,economic_name_AR as economic_name,image,unit_price')
+                                -> with([
+                                    'items.medicine:id,category_id,scientific_name_AR as scientific_name,economic_name_AR as economic_name,image,unit_price' ,
+                                    'items.medicine.category:id,name_AR as name'
+                                    ])
                                 ->find($id);
 
                         return $query
-                            ->with('items.medicine:id,category_id,scientific_name_EN as scientific_name,economic_name_EN as economic_name,image,unit_price')
+                            ->with([
+                                'items.medicine:id,category_id,scientific_name_EN as scientific_name,economic_name_EN as economic_name,image,unit_price',
+                                'items.medicine.category:id,name_EN as name'
+                            ])
                             ->find($id);
                     }
             );
