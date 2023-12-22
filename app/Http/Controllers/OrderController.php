@@ -126,29 +126,29 @@ class OrderController extends BaseController
                     function($query) use ($id) {
                         if(request('lang') == 'ar')
                             return $query
-                                -> with('items.medicine:id,category_id,scientific_name_AR as scientific_name,economic_name_AR as economic_name,image,unit_price')
+                                -> with('items.medicine:id,category_id,scientific_name_AR as scientific_name,economic_name_AR as economic_name,unit_price')
                                 ->find($id);
 
                         return $query
-                            ->with('items.medicine:id,category_id,scientific_name_EN as scientific_name,economic_name_EN as economic_name,image,unit_price')
+                            ->with('items.medicine:id,category_id,scientific_name_EN as scientific_name,economic_name_EN as economic_name,unit_price')
                             ->find($id);
                     }
             );
 
 
-        if(!is_null($id)) {
-            $items = $order['items'];
-            $items->map(function($item){
-               $medicine = $item['medicine'];
-               $unit_price = $item['unit_price'];
-               $amount = $item['amount'];
-               $item['total_price'] = $unit_price * $amount ;
-               if(!empty($medicine['image'])){
-                   $medicine['image'] = base64_encode(file_get_contents(public_path($medicine['image'])));
-               }
-               return $medicine ;
-            });
-        }
+        // if(!is_null($id)) {
+        //     $items = $order['items'];
+        //     $items->map(function($item){
+        //        $medicine = $item['medicine'];
+        //        $unit_price = $item['unit_price'];
+        //        $amount = $item['amount'];
+        //        $item['total_price'] = $unit_price * $amount ;
+        //        if(!empty($medicine['image'])){
+        //            $medicine['image'] = base64_encode(file_get_contents(public_path($medicine['image'])));
+        //        }
+        //        return $medicine ;
+        //     });
+        // }
         return $this->sendResponse($order , 'orders');
     }
 }
