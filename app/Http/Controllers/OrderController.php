@@ -133,7 +133,6 @@ class OrderController extends BaseController
                                 ->find($id);
                         return $query
                             ->with([
-
                                 'items.medicine:id,category_id,scientific_name_EN as scientific_name,economic_name_EN as economic_name,image,unit_price',
                                 'items.medicine.category:id,name_EN as name'
                             ])
