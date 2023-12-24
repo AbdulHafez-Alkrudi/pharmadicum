@@ -139,6 +139,14 @@ class OrderController extends BaseController
                             ->find($id);
                     }
             );
+
+        if(!is_null($id)) {
+            $items = $order['items'];
+            $items->map(function($item){
+                $item['total_price'] = $item['unit_price'] * $item['amount'];
+                return $item ;
+            });
+        }
         return $this->sendResponse($order , 'orders');
     }
 }
