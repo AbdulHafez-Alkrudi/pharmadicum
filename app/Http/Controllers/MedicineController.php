@@ -97,8 +97,10 @@ class MedicineController extends BaseController
     {
         // this function return the information to the user
         // TODO: i should make a function to return all the medicines to the admin
+
         $lang = request('lang');
         $medicine = $this->get_medicine($lang, $id);
+
         return $this->sendResponse($medicine, "medicine");
     }
 
@@ -142,6 +144,7 @@ class MedicineController extends BaseController
     /**
      * @param mixed $lang
      */
+
     protected function get_medicine(mixed $lang, $id = null): MedicineResource|AnonymousResourceCollection
     {
         $page = \request('page');
@@ -161,19 +164,15 @@ class MedicineController extends BaseController
                         )
                         ->with([
                             'category:id,name_AR as name',
-                            'company:id,name_AR as name',
-                            //'batches:medicine_id,amount,expiration_date'
-                        ])
-                        ->filter(request(['category', 'search']));
-                    if($id != null)
-                        $query->with([
-                            'batches:medicine_id,amount,expiration_date',
                             'company:id,name_AR as name'
-                        ])
-                        ;
+                        ]);
+                         if($id == null){
+                             $query->with('batches:medicine_id,amount,expiration_date');
+                         }
+                        return $query->filter(request(['category', 'search']));
                 },
                 function ($query) use($id){
-                    $query
+                     $query
                         ->select(
                             'id',
                             'category_id',
@@ -185,15 +184,12 @@ class MedicineController extends BaseController
                         )
                         ->with([
                             'category:id,name_EN as name',
-                        ])
-                        ->filter(request(['category', 'search']));
-                    if($id != null)
-                        $query->with([
-                            'batches:medicine_id,amount,expiration_date',
-                            'company:id,name_AR as name'
-                        ])
-                        ;
-                    return $query;
+                            'company:id,name_EN as name'
+                        ]);
+                        if($id == null){
+                            $query->with('batches:medicine_id,amount,expiration_date');
+                        }
+                        return $query->filter(request(['category', 'search']));
                 }
             )
             ->withCount('favorite_users as popularity')
@@ -206,7 +202,7 @@ class MedicineController extends BaseController
                         ->withQueryString();
                 },
                 function ($query) use ($id) {
-                    return $query->find($id)->first();
+                    return $query->find($id);
                 }
             );
         if ($id != null)
