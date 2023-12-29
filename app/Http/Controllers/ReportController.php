@@ -135,6 +135,6 @@ class ReportController extends BaseController
             ->join('medicines' , 'medicines.id' , '=' , 'order_items.medicine_id')
             ->groupBy('medicines.category_id')
             ->get();
-       return $report;
+       return $this->sendResponse($report , 'report');
    }
 }
