@@ -8,7 +8,8 @@ use App\Http\Controllers\{Auth\LoginController,
     ExpirationMedicineController,
     FavoriteMedicineController,
     MedicineController,
-    OrderController};
+    OrderController,
+    ReportController};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +34,5 @@ Route::middleware(['auth:api']) ->group(function(){
     Route::resource('category', CategoryController::class);
     Route::resource('favorite', FavoriteMedicineController::class);
     Route::resource('batch'   , ExpirationMedicineController::class );
+    Route::get('report', ReportController::class);
 });

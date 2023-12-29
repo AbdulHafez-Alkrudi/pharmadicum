@@ -19,7 +19,9 @@ class MedicineResource extends JsonResource
     {
 
         $user = auth()->id();
+
         $medicine_id = $this->id ;
+
         $data = parent::toArray($request);
         $data['is_favorite'] = FavoriteMedicine::query()->where([
                                                                 ['medicine_id' , '=' , $medicine_id],
