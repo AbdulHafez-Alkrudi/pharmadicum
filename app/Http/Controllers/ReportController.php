@@ -75,7 +75,7 @@ class ReportController extends BaseController
                return $medicine->batches->pluck('amount');
            })->sum();
 
-           $category['percentage'] = $total_amount / $total_amount_medicines;
+           $category['percentage'] = $total_amount / $total_amount_medicines * 100.0;
 
            return [
               'category_name' => $category['name'],
@@ -94,7 +94,7 @@ class ReportController extends BaseController
             ->get();
 
         $categories->map(function($category) use($total_amount_sold_medicines){
-           $category['percentage'] = $category['total']/$total_amount_sold_medicines ;
+           $category['percentage'] = $category['total']/$total_amount_sold_medicines * 100.0;
         });
         $report['category_percentage_for_sold_medicines'] = $categories;
 
