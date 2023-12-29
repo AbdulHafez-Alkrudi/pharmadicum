@@ -145,7 +145,7 @@ class MedicineController extends BaseController
      * @param mixed $lang
      */
 
-    protected function get_medicine(mixed $lang, $id = null): MedicineResource|AnonymousResourceCollection
+    public function get_medicine(mixed $lang, $id = null)
     {
         $page = \request('page');
         $medicines = Medicine::query()
