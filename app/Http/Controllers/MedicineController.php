@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\MedicineResource;
-use App\Models\{Category, Company, ExpirationMedicine, FavoriteMedicine, Medicine};
+use App\Models\{Category, Company, ExpirationMedicine, FavoriteMedicine, Medicine, Role};
 use Illuminate\Http\{JsonResponse, Request, Resources\Json\AnonymousResourceCollection};
 use Illuminate\Support\Facades\{DB, Validator};
 
@@ -97,8 +97,10 @@ class MedicineController extends BaseController
     {
         // this function return the information to the user
         // TODO: i should make a function to return all the medicines to the admin
+
         $lang = request('lang');
         $medicine = $this->get_medicine($lang, $id);
+
         return $this->sendResponse($medicine, "medicine");
     }
 
@@ -142,14 +144,15 @@ class MedicineController extends BaseController
     /**
      * @param mixed $lang
      */
+
     protected function get_medicine(mixed $lang, $id = null): MedicineResource|AnonymousResourceCollection
     {
         $page = \request('page');
         $medicines = Medicine::query()
             ->when(
                 $lang == 'ar',
-                function ($query) {
-                    return $query
+                function ($query) use($id){
+                     $query
                         ->select(
                             'id',
                             'category_id',
@@ -161,13 +164,15 @@ class MedicineController extends BaseController
                         )
                         ->with([
                             'category:id,name_AR as name',
-                            'company:id,name_AR as name',
-                            'batches:medicine_id,amount,expiration_date'
-                        ])
-                        ->filter(request(['category', 'search']));
+                            'company:id,name_AR as name'
+                        ]);
+                         if($id == null){
+                             $query->with('batches:medicine_id,amount,expiration_date');
+                         }
+                        return $query->filter(request(['category', 'search']));
                 },
-                function ($query) {
-                    return $query
+                function ($query) use($id){
+                     $query
                         ->select(
                             'id',
                             'category_id',
@@ -179,10 +184,12 @@ class MedicineController extends BaseController
                         )
                         ->with([
                             'category:id,name_EN as name',
-                            'company:id,name_EN as name',
-                            'batches:medicine_id,amount,expiration_date'
-                        ])
-                        ->filter(request(['category', 'search']));
+                            'company:id,name_EN as name'
+                        ]);
+                        if($id == null){
+                            $query->with('batches:medicine_id,amount,expiration_date');
+                        }
+                        return $query->filter(request(['category', 'search']));
                 }
             )
             ->withCount('favorite_users as popularity')
