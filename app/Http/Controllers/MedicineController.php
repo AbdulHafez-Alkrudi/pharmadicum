@@ -198,7 +198,7 @@ class MedicineController extends BaseController
                 $id == null,
                 function ($query) use($page) {
                     if($page == null) return $query->get(); // Here the admin has requested all the medicines
-                    return $query->paginate(5)
+                    return $query->paginate(10)
                         ->withQueryString();
                 },
                 function ($query) use ($id) {
