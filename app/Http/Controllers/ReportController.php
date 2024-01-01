@@ -17,8 +17,8 @@ class ReportController extends BaseController
    public function __invoke()
    {
        $report = array();
-       $beginning_of_last_month = Carbon::now()->/*subMonth()->*/startOfMonth();
-       $ending_of_last_month = Carbon::now()->/*subMonth()->*/endOfMonth();
+       $beginning_of_last_month = Carbon::now()->subMonth()->startOfMonth();
+       $ending_of_last_month = Carbon::now()->subMonth()->endOfMonth();
        $categories_all = Category::query()->
                when(request('lang') == 'ar' ,
                    fn($query) => $query->select('id' , 'name_AR as name'),
@@ -125,7 +125,11 @@ class ReportController extends BaseController
             ->first();
        ;
         if(!is_null($the_most_sold_medicine))
-           $report['the_most_sold_medicine'] = (new MedicineController)->get_medicine(request('lang') , $the_most_sold_medicine['medicine_id']);
+        {
+            $report['the_most_sold_medicine'] = (new MedicineController)->get_medicine(request('lang') , $the_most_sold_medicine['medicine_id']);
+            $report['the_most_sold_medicine']['total'] = (Integer)$the_most_sold_medicine['total_sum'];
+
+        }
         else
             $report['the_most_sold_medicine'] = -1 ;
        //12-Number of sold medicines in each category:
