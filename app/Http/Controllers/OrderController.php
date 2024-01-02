@@ -8,13 +8,14 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\Facades\{Auth, DB, Validator};
+use function PHPUnit\Framework\isEmpty;
 
 class OrderController extends BaseController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return $this->get_order();
     }
@@ -148,6 +149,7 @@ class OrderController extends BaseController
             });
         }
         return $this->sendResponse($order , 'orders');
+
     }
 }
 

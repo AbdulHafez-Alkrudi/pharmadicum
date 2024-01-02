@@ -145,7 +145,7 @@ class MedicineController extends BaseController
      * @param mixed $lang
      */
 
-    public function get_medicine(mixed $lang, $id = null)
+    public function get_medicine(mixed $lang, $id = null): MedicineResource|AnonymousResourceCollection
     {
         $page = \request('page');
         $medicines = Medicine::query()
@@ -197,7 +197,7 @@ class MedicineController extends BaseController
             ->when(
                 $id == null,
                 function ($query) use($page) {
-                    if($page == null) return $query->get(); // Here the admin has requested all the medicines
+                    if($page == null) return $query->get(); // Here the admin has requested all the medicines and there is no paginated data there because the frontends are so weak
                     return $query->paginate(10)
                         ->withQueryString();
                 },
