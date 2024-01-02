@@ -118,9 +118,18 @@ class ReportController extends BaseController
               ->groupBy('week')
               ->get();
         $cnt = 1 ;
-        foreach($orders_in_each_week as $week){
+        // if the admin requested the report in the middle of the month this procedure will return only the previous weeks
+       // so i'll just send the rest of the weeks to the front and give them a value of 0
+
+
+       foreach($orders_in_each_week as $week){
             $week['week'] = $cnt++;
         }
+       while(sizeof($orders_in_each_week) != 4)
+           $orders_in_each_week[] = [
+               "week" => $cnt++,
+               "number_of_orders" => 0
+           ] ;
         $report['orders_in_each_week'] = $orders_in_each_week ;
 
         // 11-the most sold medicine last month
